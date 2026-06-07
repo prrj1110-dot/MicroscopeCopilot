@@ -1,0 +1,6 @@
+===== SEEING MATTER IN LAYERS REPORT =====
+Particles Found: 75
+Porosity (%): 31.65
+Crack Percentage (%): 39.36
+Health Score: 28.99
+Material Grade: POOR

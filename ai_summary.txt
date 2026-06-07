@@ -1,0 +1,12 @@
+
+AI MATERIAL ANALYSIS SUMMARY
+
+The image analysis detected 75 particles.
+
+The material shows high porosity (31.65%)
+and high crack density (39.36%).
+
+The calculated health score is 28.99,
+resulting in a material grade of POOR.
+
+Overall, the sample demonstrates requires further inspection.

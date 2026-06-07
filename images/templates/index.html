@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microscope Copilot</title>
+
+```
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+```
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>🔬 Microscope Copilot</h1>
+<p>AI-Powered Nanomaterial Analysis Dashboard</p>
+
+<form method="POST" enctype="multipart/form-data">
+
+    <input type="file"
+           name="image"
+           required>
+
+    <button type="submit">
+        🚀 Analyze Sample
+    </button>
+
+</form>
+
+{% if image_path %}
+
+<h2>📷 Uploaded Microscope Image</h2>
+
+<img
+    src="{{ url_for('static', filename='uploads/' + image_path) }}"
+    alt="Microscope Image"
+>
+
+<h2>📊 Analysis Dashboard</h2>
+
+<div class="card-container">
+
+    <div class="card">
+        <h3>🔹 Particles</h3>
+        <p>{{ particle_count }}</p>
+    </div>
+
+    <div class="card">
+        <h3>🕳️ Porosity</h3>
+        <p>{{ porosity }}%</p>
+    </div>
+
+    <div class="card">
+        <h3>⚡ Crack %</h3>
+        <p>{{ crack_percentage }}%</p>
+    </div>
+
+    <div class="card">
+        <h3>❤️ Health Score</h3>
+        <p>{{ health_score }}</p>
+    </div>
+
+    <div class="card">
+        <h3>🏆 Grade</h3>
+        <p>{{ material_grade }}</p>
+    </div>
+
+</div>
+
+<div class="summary-box">
+
+    <h2>📈 Health Score Progress</h2>
+
+    <div class="progress-bar">
+        <div class="progress-fill"
+             style="width: {{ health_score }}%;">
+        </div>
+    </div>
+
+    <h3>{{ health_score }}%</h3>
+
+</div>
+
+<div class="summary-box">
+
+    <h2>📝 Analysis Summary</h2>
+
+    <p>
+        The uploaded material contains
+        <strong>{{ particle_count }}</strong> particles,
+        <strong>{{ porosity }}%</strong> porosity,
+        and <strong>{{ crack_percentage }}%</strong> crack percentage.
+
+        The calculated health score is
+        <strong>{{ health_score }}</strong>
+        resulting in a material grade of
+        <strong>{{ material_grade }}</strong>.
+    </p>
+
+</div>
+
+{% endif %}
+```
+
+</div>
+
+</body>
+</html>
