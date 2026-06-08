@@ -182,7 +182,7 @@ if request.method == "POST":
                 "static/dashboard_result.png",
                 dashboard
             )
-
+            print("NEW DASHBOARD SAVED")
         image_path = file.filename
 
 return render_template(
