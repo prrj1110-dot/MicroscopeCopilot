@@ -3,184 +3,209 @@ import os
 import cv2
 import numpy as np
 
-app = Flask(**name**)
+app = Flask(__name__)
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 if not os.path.exists(UPLOAD_FOLDER):
-os.makedirs(UPLOAD_FOLDER)
+    os.makedirs(UPLOAD_FOLDER)
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
 
-```
-image_path = None
-particle_count = None
-porosity = None
-crack_percentage = None
-health_score = None
-material_grade = None
+    image_path = None
+    particle_count = 0
+    porosity = 0
+    crack_percentage = 0
+    health_score = 0
+    material_grade = "N/A"
 
-if request.method == "POST":
+    if request.method == "POST":
 
-    file = request.files["image"]
+        file = request.files["image"]
 
-    if file and file.filename != "":
+        if file and file.filename != "":
 
-        filepath = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            file.filename
-        )
-
-        file.save(filepath)
-
-        img = cv2.imread(filepath)
-
-        if img is not None:
-
-            gray = cv2.cvtColor(
-                img,
-                cv2.COLOR_BGR2GRAY
+            filepath = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                file.filename
             )
 
-            # POROSITY
-            _, pore_mask = cv2.threshold(
-                gray,
-                100,
-                255,
-                cv2.THRESH_BINARY_INV
-            )
+            file.save(filepath)
 
-            total_pixels = gray.shape[0] * gray.shape[1]
-            pore_pixels = cv2.countNonZero(pore_mask)
+            img = cv2.imread(filepath)
 
-            porosity = round(
-                (pore_pixels / total_pixels) * 100,
-                2
-            )
+            if img is not None:
 
-            # PARTICLE COUNT
-            _, thresh = cv2.threshold(
-                gray,
-                120,
-                255,
-                cv2.THRESH_BINARY
-            )
+                gray = cv2.cvtColor(
+                    img,
+                    cv2.COLOR_BGR2GRAY
+                )
 
-            contours, _ = cv2.findContours(
-                thresh,
-                cv2.RETR_EXTERNAL,
-                cv2.CHAIN_APPROX_SIMPLE
-            )
+                # =====================
+                # POROSITY
+                # =====================
+                _, pore_mask = cv2.threshold(
+                    gray,
+                    100,
+                    255,
+                    cv2.THRESH_BINARY_INV
+                )
 
-            particle_count = 0
+                total_pixels = gray.shape[0] * gray.shape[1]
+                pore_pixels = cv2.countNonZero(pore_mask)
 
-            for cnt in contours:
-                area = cv2.contourArea(cnt)
+                porosity = round(
+                    (pore_pixels / total_pixels) * 100,
+                    2
+                )
 
-                if area > 100:
-                    particle_count += 1
+                # =====================
+                # PARTICLE COUNT
+                # =====================
+                _, thresh = cv2.threshold(
+                    gray,
+                    120,
+                    255,
+                    cv2.THRESH_BINARY
+                )
 
-            # CRACK ANALYSIS
-            crack_edges = cv2.Canny(
-                gray,
-                100,
-                200
-            )
+                contours, _ = cv2.findContours(
+                    thresh,
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_SIMPLE
+                )
 
-            crack_pixels = cv2.countNonZero(crack_edges)
+                particle_count = 0
 
-            crack_percentage = round(
-                (crack_pixels / total_pixels) * 100,
-                2
-            )
+                for cnt in contours:
+                    area = cv2.contourArea(cnt)
 
-            # HEALTH SCORE
-            health_score = round(
-                max(
-                    0,
-                    100 - porosity - crack_percentage
-                ),
-                2
-            )
+                    if area > 100:
+                        particle_count += 1
 
-            # MATERIAL GRADE
-            if health_score >= 90:
-                material_grade = "A"
-            elif health_score >= 75:
-                material_grade = "B"
-            elif health_score >= 60:
-                material_grade = "C"
-            else:
-                material_grade = "D"
+                # =====================
+                # CRACK ANALYSIS
+                # =====================
+                crack_edges = cv2.Canny(
+                    gray,
+                    100,
+                    200
+                )
 
-            # DASHBOARD IMAGE
-            original = cv2.resize(img, (450, 300))
+                crack_pixels = cv2.countNonZero(
+                    crack_edges
+                )
 
-            micro = cv2.cvtColor(
-                gray,
-                cv2.COLOR_GRAY2BGR
-            )
-            micro = cv2.resize(micro, (450, 300))
+                crack_percentage = round(
+                    (crack_pixels / total_pixels) * 100,
+                    2
+                )
 
-            porosity_img = cv2.cvtColor(
-                pore_mask,
-                cv2.COLOR_GRAY2BGR
-            )
-            porosity_img = cv2.resize(
-                porosity_img,
-                (450, 300)
-            )
+                # =====================
+                # HEALTH SCORE
+                # =====================
+                health_score = round(
+                    max(
+                        0,
+                        100 - porosity - crack_percentage
+                    ),
+                    2
+                )
 
-            crack_img = cv2.cvtColor(
-                crack_edges,
-                cv2.COLOR_GRAY2BGR
-            )
-            crack_img = cv2.resize(
-                crack_img,
-                (450, 300)
-            )
+                # =====================
+                # MATERIAL GRADE
+                # =====================
+                if health_score >= 90:
+                    material_grade = "A"
 
-            top = np.hstack(
-                (original, micro)
-            )
+                elif health_score >= 75:
+                    material_grade = "B"
 
-            bottom = np.hstack(
-                (porosity_img, crack_img)
-            )
+                elif health_score >= 60:
+                    material_grade = "C"
 
-            dashboard = np.vstack(
-                (top, bottom)
-            )
+                else:
+                    material_grade = "D"
 
-            cv2.imwrite(
-                "static/dashboard_result.png",
-                dashboard
-            )
+                # =====================
+                # DASHBOARD IMAGE
+                # =====================
 
-            print("NEW DASHBOARD SAVED")
+                original = cv2.resize(
+                    img,
+                    (450, 300)
+                )
 
-        image_path = file.filename
+                micro = cv2.cvtColor(
+                    gray,
+                    cv2.COLOR_GRAY2BGR
+                )
 
-return render_template(
-    "index.html",
-    image_path=image_path,
-    particle_count=particle_count,
-    porosity=porosity,
-    crack_percentage=crack_percentage,
-    health_score=health_score,
-    material_grade=material_grade,
-    dashboard_image="dashboard_result.png"
-)
-```
+                micro = cv2.resize(
+                    micro,
+                    (450, 300)
+                )
 
-if **name** == "**main**":
-port = int(os.environ.get("PORT", 5000))
+                porosity_img = cv2.cvtColor(
+                    pore_mask,
+                    cv2.COLOR_GRAY2BGR
+                )
 
-```
-app.run(
-    host="0.0.0.0",
-    port=port
-)
-```
+                porosity_img = cv2.resize(
+                    porosity_img,
+                    (450, 300)
+                )
+
+                crack_img = cv2.cvtColor(
+                    crack_edges,
+                    cv2.COLOR_GRAY2BGR
+                )
+
+                crack_img = cv2.resize(
+                    crack_img,
+                    (450, 300)
+                )
+
+                top = np.hstack(
+                    (original, micro)
+                )
+
+                bottom = np.hstack(
+                    (porosity_img, crack_img)
+                )
+
+                dashboard = np.vstack(
+                    (top, bottom)
+                )
+
+                cv2.imwrite(
+                    "static/dashboard_result.png",
+                    dashboard
+                )
+
+            image_path = file.filename
+
+    return render_template(
+        "index.html",
+        image_path=image_path,
+        particle_count=particle_count,
+        porosity=porosity,
+        crack_percentage=crack_percentage,
+        health_score=health_score,
+        material_grade=material_grade,
+        dashboard_image="dashboard_result.png"
+    )
+
+
+if __name__ == "__main__":
+    port = int(
+        os.environ.get("PORT", 5000)
+    )
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )
