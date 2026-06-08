@@ -44,6 +44,16 @@
 >
 
 <h2>📊 Analysis Dashboard</h2>
+{% if dashboard_image %}
+
+<div class="dashboard-image">
+    <img
+        src="{{ url_for('static', filename=dashboard_image) }}"
+        alt="Analysis Dashboard"
+        style="width:100%; border-radius:15px; margin-top:20px;">
+</div>
+
+{% endif %}
 
 <div class="card-container">
 

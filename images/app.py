@@ -129,7 +129,8 @@ def home():
         porosity=porosity,
         crack_percentage=crack_percentage,
         health_score=health_score,
-        material_grade=material_grade
+        material_grade=material_grade,
+        dashboard_image="dashboard_result.png"
     )
 
 import os
