@@ -44,9 +44,7 @@ if request.method == "POST":
                 cv2.COLOR_BGR2GRAY
             )
 
-            # -------------------------
             # POROSITY
-            # -------------------------
             _, pore_mask = cv2.threshold(
                 gray,
                 100,
@@ -62,9 +60,7 @@ if request.method == "POST":
                 2
             )
 
-            # -------------------------
             # PARTICLE COUNT
-            # -------------------------
             _, thresh = cv2.threshold(
                 gray,
                 120,
@@ -86,27 +82,21 @@ if request.method == "POST":
                 if area > 100:
                     particle_count += 1
 
-            # -------------------------
             # CRACK ANALYSIS
-            # -------------------------
             crack_edges = cv2.Canny(
                 gray,
                 100,
                 200
             )
 
-            crack_pixels = cv2.countNonZero(
-                crack_edges
-            )
+            crack_pixels = cv2.countNonZero(crack_edges)
 
             crack_percentage = round(
                 (crack_pixels / total_pixels) * 100,
                 2
             )
 
-            # -------------------------
             # HEALTH SCORE
-            # -------------------------
             health_score = round(
                 max(
                     0,
@@ -115,9 +105,7 @@ if request.method == "POST":
                 2
             )
 
-            # -------------------------
             # MATERIAL GRADE
-            # -------------------------
             if health_score >= 90:
                 material_grade = "A"
             elif health_score >= 75:
@@ -127,30 +115,19 @@ if request.method == "POST":
             else:
                 material_grade = "D"
 
-            # -------------------------
             # DASHBOARD IMAGE
-            # -------------------------
-
-            original = cv2.resize(
-                img,
-                (450, 300)
-            )
+            original = cv2.resize(img, (450, 300))
 
             micro = cv2.cvtColor(
                 gray,
                 cv2.COLOR_GRAY2BGR
             )
-
-            micro = cv2.resize(
-                micro,
-                (450, 300)
-            )
+            micro = cv2.resize(micro, (450, 300))
 
             porosity_img = cv2.cvtColor(
                 pore_mask,
                 cv2.COLOR_GRAY2BGR
             )
-
             porosity_img = cv2.resize(
                 porosity_img,
                 (450, 300)
@@ -160,7 +137,6 @@ if request.method == "POST":
                 crack_edges,
                 cv2.COLOR_GRAY2BGR
             )
-
             crack_img = cv2.resize(
                 crack_img,
                 (450, 300)
@@ -182,7 +158,9 @@ if request.method == "POST":
                 "static/dashboard_result.png",
                 dashboard
             )
+
             print("NEW DASHBOARD SAVED")
+
         image_path = file.filename
 
 return render_template(
@@ -199,7 +177,10 @@ return render_template(
 
 if **name** == "**main**":
 port = int(os.environ.get("PORT", 5000))
+
+```
 app.run(
-host="0.0.0.0",
-port=port
+    host="0.0.0.0",
+    port=port
 )
+```
